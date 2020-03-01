@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="yuyu.commonweb.framework.dao.UserDao">
+    <resultMap id="UserResultMap" type="yuyu.commonweb.framework.entity.User">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="username" jdbcType="VARCHAR" property="username" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="salt" jdbcType="VARCHAR" property="salt" />
+        <result column="user_create_date" jdbcType="TIMESTAMP" property="createDate" />
+        <result column="user_create_person" jdbcType="VARCHAR" property="createPerson" />
+        <result column="user_update_date" jdbcType="TIMESTAMP" property="updateDate" />
+        <result column="user_update_person" jdbcType="VARCHAR" property="updatePerson" />
+        <collection property="roles" resultMap="RoleResultMap"></collection>
+    </resultMap>
+
+    <resultMap id="RoleResultMap" type="yuyu.commonweb.framework.entity.Role">
+        <id column="role_id" jdbcType="BIGINT" property="id" />
+        <result column="role_name" jdbcType="VARCHAR" property="name" />
+        <result column="role_description" jdbcType="VARCHAR" property="description" />
+        <result column="role_rols" jdbcType="VARCHAR" property="rols" />
+        <result column="role_create_date" jdbcType="TIMESTAMP" property="createDate" />
+        <result column="role_create_person" jdbcType="VARCHAR" property="createPerson" />
+        <result column="role_update_date" jdbcType="TIMESTAMP" property="updateDate" />
+        <result column="role_update_person" jdbcType="VARCHAR" property="updatePerson" />
+        <collection property="permissions" resultMap="PermissionResultMap"></collection>
+    </resultMap>
+
+    <resultMap id="PermissionResultMap" type="yuyu.commonweb.framework.entity.Permission">
+        <id column="permission_id" jdbcType="BIGINT" property="id" />
+        <result column="permission_name" jdbcType="VARCHAR" property="name" />
+        <result column="permission_pers" jdbcType="VARCHAR" property="pers" />
+        <result column="permission_description" jdbcType="VARCHAR" property="description" />
+        <result column="permission_url" jdbcType="VARCHAR" property="url" />
+        <result column="permission_type" jdbcType="VARCHAR" property="type" />
+        <result column="permission_parent_id" jdbcType="VARCHAR" property="parentId" />
+        <result column="permission_parent_ids" jdbcType="VARCHAR" property="parentIds" />
+        <result column="permission_create_date" jdbcType="TIMESTAMP" property="createDate" />
+        <result column="permission_create_person" jdbcType="VARCHAR" property="createPerson" />
+        <result column="permission_update_date" jdbcType="TIMESTAMP" property="updateDate" />
+        <result column="permission_update_person" jdbcType="VARCHAR" property="updatePerson" />
+    </resultMap>
+
+    <select id="selectUserByUsername" resultType="yuyu.commonweb.framework.entity.User">
+        SELECT * FROM `sys_user` where username=#{username}
+    </select>
+
+    <select id="selectUserByUserId" resultType="yuyu.commonweb.framework.entity.User">
+        SELECT * FROM `sys_user` where id=#{id}
+    </select>
+
+    <select id="selectRoleByRoleId" resultType="yuyu.commonweb.framework.entity.Role">
+        SELECT * FROM `sys_role` where id=#{id}
+    </select>
+
+    <select id="selectPerminssByPerminssId" resultType="yuyu.commonweb.framework.entity.Permission">
+        SELECT * FROM `sys_permission` where id=#{id}
+    </select>
+
+    <select id="selectUserAllByUsername" resultMap="UserResultMap">
+        SELECT
+        t1.id,
+        t1.username,
+        t1.PASSWORD,
+        t1.salt,
+        t1.create_date AS user_create_date,
+        t1.create_person AS user_create_person,
+        t1.update_date AS user_update_date,
+        t1.update_person AS user_update_person,
+        t3.id AS role_id,
+        t3.NAME AS role_name,
+        t3.rols AS role_rols,
+        t3.description AS role_description,
+        t3.create_date AS role_create_date,
+        t3.create_person AS role_create_person,
+        t3.update_date AS role_update_date,
+        t3.update_person AS role_update_person,
+        t5.id AS permission_id,
+        t5.NAME AS permission_name,
+        t5.pers AS permission_pers,
+        t5.description AS permission_description,
+        t5.url AS permission_url,
+        t5.type AS permission_type,
+        t5.parent_id AS permission_parent_id,
+        t5.parent_ids AS permission_parent_ids,
+        t5.create_date AS permission_create_date,
+        t5.create_person AS permission_create_person,
+        t5.update_date AS permission_update_date,
+        t5.update_person AS permission_update_person
+        FROM
+        sys_user t1
+        INNER JOIN sys_user_role t2 ON t1.id = t2.user_id
+        INNER JOIN sys_role t3 ON t2.role_id = t3.id
+        INNER JOIN sys_role_permission t4 ON t3.id = t4.role_id
+        INNER JOIN sys_permission t5 ON t4.permission_id = t5.id
+        WHERE
+        t1.username = #{username}
+    </select>
+
+
+
+
+</mapper>

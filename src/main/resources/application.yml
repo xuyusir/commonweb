@@ -1,0 +1,30 @@
+spring:
+  thymeleaf:
+    enabled: false
+    cache: false
+
+  datasource:
+    url: jdbc:mysql://192.168.222.10:3307/yuyu-common-web?characterEncoding=utf-8&useSSL=true&serverTimezone=GMT
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+    #mvc
+  mvc:
+    view:
+      prefix: /html/
+      suffix: .html
+
+server:
+  port: 8001
+
+  tomcat:
+    uri-encoding: utf-8
+
+mybatis:
+  mapper-locations: mapper/**/*Mapper.xml
+
+
+
+
+
