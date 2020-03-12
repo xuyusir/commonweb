@@ -1,8 +1,9 @@
-package yuyu.commonweb.framework.entity;
+package yuyu.commonweb.framework.entity.user;
 
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class Permission {
@@ -19,4 +20,6 @@ public class Permission {
     String createPerson;
     Date updateDate;
     String updatePerson;
+
+    List<Permission> children;
 }

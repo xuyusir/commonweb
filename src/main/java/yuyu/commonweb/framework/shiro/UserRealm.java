@@ -8,10 +8,11 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import yuyu.commonweb.framework.entity.Permission;
-import yuyu.commonweb.framework.entity.Role;
-import yuyu.commonweb.framework.entity.User;
+import yuyu.commonweb.framework.entity.user.Permission;
+import yuyu.commonweb.framework.entity.user.Role;
+import yuyu.commonweb.framework.entity.user.User;
 import yuyu.commonweb.framework.service.UserService;
 
 public class UserRealm extends AuthorizingRealm {
@@ -46,7 +47,9 @@ public class UserRealm extends AuthorizingRealm {
             return null;
         }
 
-        SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(user.getUsername(), user.getPassword(), getName());
+        SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(user.getUsername()
+                ,user.getPassword()
+                , ByteSource.Util.bytes(user.getSalt()), getName());
         return authenticationInfo;
     }
 }

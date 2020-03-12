@@ -1,4 +1,4 @@
-package yuyu.commonweb.framework.entity;
+package yuyu.commonweb.framework.entity.user;
 
 import lombok.Data;
 
@@ -6,15 +6,17 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-public class Role {
+public class User {
+
     Integer id;
-    String name;
-    String description;
-    String rols;
+    String username;
+    String password;
+    String salt;
     Date createDate;
     String createPerson;
     Date updateDate;
     String updatePerson;
 
-    List<Permission> permissions;
+    List<Role> roles;
+
 }

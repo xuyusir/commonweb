@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="yuyu.commonweb.framework.dao.UserDao">
-    <resultMap id="UserResultMap" type="yuyu.commonweb.framework.entity.User">
+    <resultMap id="UserResultMap" type="yuyu.commonweb.framework.entity.user.User">
         <id column="id" jdbcType="BIGINT" property="id" />
         <result column="username" jdbcType="VARCHAR" property="username" />
         <result column="password" jdbcType="VARCHAR" property="password" />
@@ -14,7 +14,7 @@
         <collection property="roles" resultMap="RoleResultMap"></collection>
     </resultMap>
 
-    <resultMap id="RoleResultMap" type="yuyu.commonweb.framework.entity.Role">
+    <resultMap id="RoleResultMap" type="yuyu.commonweb.framework.entity.user.Role">
         <id column="role_id" jdbcType="BIGINT" property="id" />
         <result column="role_name" jdbcType="VARCHAR" property="name" />
         <result column="role_description" jdbcType="VARCHAR" property="description" />
@@ -26,7 +26,7 @@
         <collection property="permissions" resultMap="PermissionResultMap"></collection>
     </resultMap>
 
-    <resultMap id="PermissionResultMap" type="yuyu.commonweb.framework.entity.Permission">
+    <resultMap id="PermissionResultMap" type="yuyu.commonweb.framework.entity.user.Permission">
         <id column="permission_id" jdbcType="BIGINT" property="id" />
         <result column="permission_name" jdbcType="VARCHAR" property="name" />
         <result column="permission_pers" jdbcType="VARCHAR" property="pers" />
@@ -41,19 +41,19 @@
         <result column="permission_update_person" jdbcType="VARCHAR" property="updatePerson" />
     </resultMap>
 
-    <select id="selectUserByUsername" resultType="yuyu.commonweb.framework.entity.User">
+    <select id="selectUserByUsername" resultType="yuyu.commonweb.framework.entity.user.User">
         SELECT * FROM `sys_user` where username=#{username}
     </select>
 
-    <select id="selectUserByUserId" resultType="yuyu.commonweb.framework.entity.User">
+    <select id="selectUserByUserId" resultType="yuyu.commonweb.framework.entity.user.User">
         SELECT * FROM `sys_user` where id=#{id}
     </select>
 
-    <select id="selectRoleByRoleId" resultType="yuyu.commonweb.framework.entity.Role">
+    <select id="selectRoleByRoleId" resultType="yuyu.commonweb.framework.entity.user.Role">
         SELECT * FROM `sys_role` where id=#{id}
     </select>
 
-    <select id="selectPerminssByPerminssId" resultType="yuyu.commonweb.framework.entity.Permission">
+    <select id="selectPerminssByPerminssId" resultType="yuyu.commonweb.framework.entity.user.Permission">
         SELECT * FROM `sys_permission` where id=#{id}
     </select>
 
@@ -89,13 +89,30 @@
         t5.update_person AS permission_update_person
         FROM
         sys_user t1
-        INNER JOIN sys_user_role t2 ON t1.id = t2.user_id
-        INNER JOIN sys_role t3 ON t2.role_id = t3.id
-        INNER JOIN sys_role_permission t4 ON t3.id = t4.role_id
-        INNER JOIN sys_permission t5 ON t4.permission_id = t5.id
+        LEFT JOIN sys_user_role t2 ON t1.id = t2.user_id
+        LEFT JOIN sys_role t3 ON t2.role_id = t3.id
+        LEFT JOIN sys_role_permission t4 ON t3.id = t4.role_id
+        LEFT JOIN sys_permission t5 ON t4.permission_id = t5.id
         WHERE
         t1.username = #{username}
     </select>
+
+    <select id="selectAllUsers" resultMap="UserResultMap">
+        SELECT * FROM `sys_user`
+    </select>
+
+    <select id="findAllRoles" resultType="yuyu.commonweb.framework.entity.user.Role" >
+        SELECT * FROM `sys_role`
+    </select>
+
+    <insert id="insertUser">
+        INSERT INTO sys_user(username,password,salt) VALUES(#{username},#{password},#{salt})
+    </insert>
+
+    <insert id="insertUserRole">
+        INSERT INTO sys_user_role(user_id,role_id) VALUES(#{user.id},#{role.id})
+    </insert>
+
 
 
 

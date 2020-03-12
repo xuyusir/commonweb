@@ -9,11 +9,16 @@ spring:
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-    #mvc
-  mvc:
-    view:
-      prefix: /html/
-      suffix: .html
+    #redis
+  redis:
+    host: 192.168.222.133
+    port: 6379
+    max-wait: 30000
+    max-active: 100
+    max-idle: 20
+    min-idle: 0
+    timeout: 3000
+    password: redis
 
 server:
   port: 8001

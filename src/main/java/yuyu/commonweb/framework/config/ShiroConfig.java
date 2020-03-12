@@ -1,6 +1,8 @@
 package yuyu.commonweb.framework.config;
 
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.context.annotation.Bean;
@@ -20,14 +22,12 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         Map<String, String> filterChainDefinitionMap = new HashMap<String, String>();
 
-        shiroFilterFactoryBean.setLoginUrl("/login");
-        shiroFilterFactoryBean.setUnauthorizedUrl("/unauthc");
-        shiroFilterFactoryBean.setSuccessUrl("/index");
-
+        filterChainDefinitionMap.put("/login","anon");
+        filterChainDefinitionMap.put("/logout","anon");
+        filterChainDefinitionMap.put("/test","anon");
         filterChainDefinitionMap.put("/css/**","anon");
         filterChainDefinitionMap.put("/img/**","anon");
         filterChainDefinitionMap.put("/js/**","anon");
-        filterChainDefinitionMap.put("/logout","logout");
         filterChainDefinitionMap.put("/**","authc");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
@@ -45,7 +45,36 @@ public class ShiroConfig {
     @Bean
     public UserRealm userRealm() {
         UserRealm userRealm = new UserRealm();
+        userRealm.setCredentialsMatcher(hashedCredentialsMatcher());
         return userRealm;
+    }
+
+    /**
+     * 凭证匹配器
+     * （由于我们的密码校验交给Shiro的SimpleAuthenticationInfo进行处理了
+     *  所以我们需要修改下doGetAuthenticationInfo中的代码;
+     * ）
+     * @return
+     */
+    @Bean
+    public HashedCredentialsMatcher hashedCredentialsMatcher(){
+        HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
+        hashedCredentialsMatcher.setHashAlgorithmName("md5");//散列算法:这里使用MD5算法;
+        hashedCredentialsMatcher.setHashIterations(2);//散列的次数，比如散列两次，相当于 md5(md5(""));
+        return hashedCredentialsMatcher;
+    }
+
+    /**
+     *  开启shiro aop注解支持.
+     *  使用代理方式;所以需要开启代码支持;
+     * @param securityManager
+     * @return
+     */
+    @Bean
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager){
+        AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
+        authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
+        return authorizationAttributeSourceAdvisor;
     }
 
 }

@@ -2,9 +2,11 @@ package yuyu.commonweb.framework.dao;
 
 
 import org.springframework.stereotype.Repository;
-import yuyu.commonweb.framework.entity.Permission;
-import yuyu.commonweb.framework.entity.Role;
-import yuyu.commonweb.framework.entity.User;
+import yuyu.commonweb.framework.entity.user.Permission;
+import yuyu.commonweb.framework.entity.user.Role;
+import yuyu.commonweb.framework.entity.user.User;
+
+import java.util.Set;
 
 @Repository
 public interface UserDao {
@@ -18,6 +20,15 @@ public interface UserDao {
     Permission selectPerminssByPerminssId(Integer id);
 
     User selectUserAllByUsername(String username);
+
+    Set<User> selectAllUsers();
+
+    Set<Role> findAllRoles();
+
+    int insertUser(User user);
+
+    int insertUserRole(User user,Role role);
+
 
 
 }
