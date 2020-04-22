@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import yuyu.commonweb.framework.entity.AjaxResult;
 import yuyu.commonweb.framework.entity.user.User;
+import yuyu.commonweb.framework.exception.CustomUnauthorizedException;
 import yuyu.commonweb.framework.service.UserService;
 
 @RestController
@@ -33,6 +34,11 @@ public class UserController {
 
     @PostMapping("adduser")
     public AjaxResult addUser(@RequestBody User user){
+
+        if(userService.findUserAllByUsername(user.getUsername()) != null){
+            throw new CustomUnauthorizedException("该帐号已存在(Account exist.)");
+        }
+
         if(userService.addUser(user)!=0){
             return new AjaxResult(AjaxResult.Type.SUCCESS,"success");
         }

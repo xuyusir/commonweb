@@ -1,7 +1,5 @@
 package yuyu.commonweb.framework.service.impl;
 
-import org.apache.shiro.crypto.SecureRandomNumberGenerator;
-import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +8,7 @@ import yuyu.commonweb.framework.entity.user.Permission;
 import yuyu.commonweb.framework.entity.user.Role;
 import yuyu.commonweb.framework.entity.user.User;
 import yuyu.commonweb.framework.service.UserService;
+import yuyu.commonweb.framework.util.AesCipherUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -30,9 +29,9 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public int addUser(User user) {
 
-        String salt = new SecureRandomNumberGenerator().nextBytes().toString(); //盐量随机
-        user.setPassword(new SimpleHash("md5",user.getPassword(),salt,2).toString());
-        user.setSalt(salt);
+        //根据用户名+密码进行加解密AES
+        String password = AesCipherUtil.enCrypto(user.getUsername() + user.getPassword());
+        user.setPassword(password);
 
         int i=userDao.insertUser(user);
         User u=userDao.selectUserByUsername(user.getUsername());
